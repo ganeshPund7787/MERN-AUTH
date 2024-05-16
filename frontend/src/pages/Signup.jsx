@@ -1,23 +1,61 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Signup = () => {
   const [formData, setFormData] = useState({});
+  const [loading, setloading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  console.log(formData);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await fetch("/api/user/signup", {
-      method: "POST",
-      headers: { "Content-Type": "Application/json" },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    console.log(data);
+    try {
+      e.preventDefault();
+      setloading(true);
+      const res = await fetch("/api/user/signup", {
+        method: "POST",
+        headers: { "Content-Type": "Application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (data.success === false) {
+        toast.error(data.message, {
+          duration: 3000,
+          style: {
+            color: "#000",
+            backgroundColor: "#fff",
+          },
+        });
+        setloading(false);
+        return;
+      }
+
+      if (data) {
+        toast.success(data.message, {
+          duration: 3000,
+          style: {
+            color: "#000",
+            backgroundColor: "#fff",
+          },
+        });
+        navigate("/");
+        setloading(false);
+      }
+    } catch (error) {
+      setloading(false);
+      toast.error(data.message, {
+        duration: 3000,
+        style: {
+          color: "#000",
+          backgroundColor: "#fff",
+        },
+      });
+    }
   };
 
   return (
@@ -84,9 +122,10 @@ const Signup = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                disabled={loading}
+                className="disabled:bg-indigo-400 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                SIGN UP
+                {loading ? "LOADING..." : "SIGN UP"}
               </button>
             </div>
           </form>

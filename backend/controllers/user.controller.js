@@ -25,6 +25,7 @@ export const signIn = async (req, res, next) => {
 
     try {
         const { email } = req.body;
+        console.log();
         const validUser = await User.findOne({ email });
 
         if (!validUser) return next(errorHandler(400, "User is not exist"));
@@ -42,10 +43,7 @@ export const signIn = async (req, res, next) => {
         res.status(200).cookie("cookie", token, {
             httpOnly: true,
             maxAge: 12 * 24 * 60 * 60 * 1000
-        }).json({
-            message: "User Login successfuly",
-            rest
-        })
+        }).json(rest)
     } catch (error) {
         next(error)
     }
