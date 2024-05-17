@@ -1,5 +1,5 @@
 import express from 'express'
-import { signIn, signUp, getProfile, logout, updateUser, deletuser } from '../controllers/user.controller.js'
+import { signIn, signUp, getProfile, logout, updateUser, deletuser, GoogleAuth } from '../controllers/user.controller.js'
 import { isAutheticated } from '../middlewares/Authentication.js'
 
 const router = express.Router()
@@ -17,5 +17,6 @@ router.get('/logout', logout)
 
 
 
+router.post('/googleAuth', GoogleAuth)
 
 export default router

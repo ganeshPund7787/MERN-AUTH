@@ -25,7 +25,7 @@ export const signIn = async (req, res, next) => {
 
     try {
         const { email } = req.body;
-        console.log();
+
         const validUser = await User.findOne({ email });
 
         if (!validUser) return next(errorHandler(400, "User is not exist"));
@@ -108,6 +108,43 @@ export const deletuser = async (req, res, next) => {
             message: "user delete successfuly"
         })
     } catch (error) {
+        next(error)
+    }
+}
+
+
+export const GoogleAuth = async (req, res, next) => {
+    try {
+        const { username, email, profileImage } = req.body;
+        const isUserExist = await User.findOne({ email });
+
+        if (isUserExist) {
+            const { password, ...rest } = isUserExist._doc;
+            const token = jwt.sign({ _id: isUserExist._id }, process.env.SECREATE_KEY);
+            res.cookie("cookie", token, {
+                httpOnly: true,
+                maxAge: 12 * 24 * 60 * 60 * 1000
+            }).status(202).json(rest)
+            return;
+        }
+
+        const GeneratePassword = Math.floor(Math.random() * 10000000 + 10000000).toString();
+        const hashedPassword = bcryptjs.hashSync(GeneratePassword, 10);
+        const newUser = new User({
+            username, email, profileImage, password: hashedPassword
+        })
+
+        await newUser.save();
+
+        const { password, ...rest } = isUserExist._doc;
+        const token = jwt.sign({ _id: newUser._id }, process.env.SECREATE_KEY);
+        res.cookie("cookie", token, {
+            httpOnly: true,
+            maxAge: 12 * 24 * 60 * 60 * 1000
+        }).status(202).json(rest)
+
+    } catch (error) {
+        console.log(`error While Google Auth user Create Time`);
         next(error)
     }
 }
