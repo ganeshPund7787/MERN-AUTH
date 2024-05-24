@@ -4,7 +4,8 @@ const initialState = {
     currentUser: localStorage.getItem("currentUser") ?
         JSON.parse(localStorage.getItem("currentUser")) :
         null,
-    loading: false
+    loading: false,
+    isEditable: false
 }
 
 const userSlice = createSlice({
@@ -22,11 +23,22 @@ const userSlice = createSlice({
             state.loading = false;
             state.currentUser = action.payload;
             localStorage.setItem("currentUser", JSON.stringify(action.payload));
+        },
+        deleteUser: (state) => {
+            state.currentUser = null;
+            localStorage.clear();
+        },
+        logoutUser: (state) => {
+            state.currentUser = null;
+            localStorage.clear();
+        },
+        toggleEdit: (state) => {
+            state.isEditable = !state.isEditable;
         }
     }
 })
 
-export const { signinStart, signinFail, signinSuccess } = userSlice.actions;
+export const { signinStart, signinFail, signinSuccess, deleteUser, logoutUser, toggleEdit } = userSlice.actions;
 
 export default userSlice.reducer;
 

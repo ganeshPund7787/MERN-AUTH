@@ -32,7 +32,7 @@ const Signin = () => {
         body: JSON.stringify(formData),
       });
       const data = await responce.json();
-      console.log(data);
+
       if (data.success === false) {
         toast.error(data.message, {
           duration: 3000,
