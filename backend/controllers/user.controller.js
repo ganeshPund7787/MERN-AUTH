@@ -66,7 +66,6 @@ export const updateUser = async (req, res, next) => {
     if (req.params.id !== req.user.id) {
         return next(errorHandler(400, "You can update only your profile"));
     }
-
     try {
         if (req.body.email) {
             const isUserExist = await User.findOne({ email: req.body.email });
@@ -76,21 +75,21 @@ export const updateUser = async (req, res, next) => {
         if (req.body.password) {
             req.body.password = bcryptjs.hashSync(req.body.password, 10);
         }
+
+
         const { id } = req.params;
         const updatedUser = await User.findByIdAndUpdate(id, {
             $set: {
                 username: req.body.username,
                 email: req.body.email,
-                password: req.body.password
+                password: req.body.password,
+                profileImage: req.body.profileImage
             }
         }, { new: true })
 
         const { password, ...rest } = updatedUser._doc;
 
-        res.status(200).json({
-            message: "User update successfuly",
-            rest
-        })
+        res.status(200).json(rest)
     } catch (error) {
         next(error)
     }

@@ -39,6 +39,4 @@ const userSlice = createSlice({
 })
 
 export const { signinStart, signinFail, signinSuccess, deleteUser, logoutUser, toggleEdit } = userSlice.actions;
-
 export default userSlice.reducer;
-
